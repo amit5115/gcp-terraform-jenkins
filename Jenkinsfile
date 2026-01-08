@@ -16,11 +16,13 @@ pipeline {
 
   stages {
 
-    stage('Checkout') {
-      steps {
-        git 'https://github.com/amit5115/gcp-terraform-jenkins.git'
-      }
+    stage('Checkout Code') {
+     steps {
+      git branch: 'main',
+        url: 'https://github.com/amit5115/gcp-terraform-jenkins.git'
     }
+ } 
+
 
     stage('Terraform Init') {
       steps {
