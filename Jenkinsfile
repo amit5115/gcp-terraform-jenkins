@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   parameters {
-    choice(name: 'TF_ACTION', choices: ['plan', 'apply'])
+    choice(name: 'TF_ACTION', choices: ['plan', 'apply', 'destroy'], description: 'Select Terraform action to perform')
     string(name: 'PROJECT_ID')
     string(name: 'REGION', defaultValue: 'us-central1')
     string(name: 'VM_NAME', defaultValue: 'demo-vm')
@@ -50,6 +50,21 @@ pipeline {
       steps {
         sh """
         terraform apply -auto-approve \
+          -var="project_id=${params.PROJECT_ID}" \
+          -var="region=${params.REGION}" \
+          -var="vm_name=${params.VM_NAME}" \
+          -var="machine_type=${params.MACHINE_TYPE}" \
+          -var="zone=${params.ZONE}"
+        """
+      }
+    }
+    stage('Terraform Destroy') {
+      when {
+        expression { params.TF_ACTION == 'destroy' }
+      }
+      steps {
+        sh """
+        terraform destroy -auto-approve \
           -var="project_id=${params.PROJECT_ID}" \
           -var="region=${params.REGION}" \
           -var="vm_name=${params.VM_NAME}" \
